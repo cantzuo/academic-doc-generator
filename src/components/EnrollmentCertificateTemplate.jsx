@@ -14,14 +14,21 @@ const EnrollmentCertificateTemplate = forwardRef(({ data }, ref) => {
     }}>
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '40px', borderBottom: '2px solid #333', paddingBottom: '20px' }}>
-            <div style={{ 
-                width: '70px', height: '70px', marginRight: '20px',
-                backgroundColor: '#333', borderRadius: '5px', 
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'white', fontWeight: 'bold'
-            }}>
-                LOGO
-            </div>
+            {data.universityLogo ? (
+                <img src={data.universityLogo} alt="Logo" style={{ 
+                    width: '70px', height: '70px', marginRight: '20px',
+                    objectFit: 'contain', display: 'block'
+                }} />
+            ) : (
+                <div style={{ 
+                    width: '70px', height: '70px', marginRight: '20px',
+                    backgroundColor: '#333', borderRadius: '5px', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'white', fontWeight: 'bold'
+                }}>
+                    LOGO
+                </div>
+            )}
             <div>
                 <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0', color: '#333' }}>{data.universityName}</h1>
                 <div style={{ fontSize: '14px', color: '#666' }}>Office of the University Registrar</div>

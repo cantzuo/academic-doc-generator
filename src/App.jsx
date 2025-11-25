@@ -32,8 +32,22 @@ const App = () => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleLogoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setFormData(prev => ({ ...prev, universityLogo: event.target.result }));
+        };
+        reader.readAsDataURL(file);
+    }
+  };
+
   const regenerateData = () => {
-    setFormData(generateRandomData());
+    setFormData(prev => ({
+        ...generateRandomData(),
+        universityLogo: prev.universityLogo // Preserve uploaded logo on regenerate
+    }));
   };
 
   const exportStitched = async (forceHorizontal = false) => {
@@ -148,14 +162,19 @@ const App = () => {
     }
   };
 
+  // Hidden refs for export (Always mounted, off-screen)
+  const hiddenAdmissionRef = useRef(null);
+  const hiddenEnrollmentRef = useRef(null);
+
   const exportSingle = async (ref, filename) => {
     if (!ref.current) return;
     setIsGenerating(true);
     try {
         const canvas = await html2canvas(ref.current, {
             backgroundColor: '#ffffff',
-            scale: 2,
-            useCORS: true
+            scale: 2, // Higher res
+            useCORS: true,
+            logging: false
         });
         canvas.toBlob((blob) => {
             saveAs(blob, filename);
@@ -199,6 +218,24 @@ const App = () => {
           
           <div className="flex flex-col gap-6">
             <Input label="University Name" name="universityName" value={formData.universityName} onChange={handleInputChange} variant="bordered" labelPlacement="outside" placeholder="Enter university name" />
+            
+            <div>
+                <label className="block text-sm font-medium text-foreground mb-2">University Logo (Optional)</label>
+                <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    className="block w-full text-sm text-slate-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-violet-50 file:text-violet-700
+                      hover:file:bg-violet-100
+                      cursor-pointer
+                    "
+                />
+            </div>
+
             <Input label="Student Name" name="studentName" value={formData.studentName} onChange={handleInputChange} variant="bordered" labelPlacement="outside" placeholder="Enter student name" />
             <Input label="Student ID" name="studentID" value={formData.studentID} onChange={handleInputChange} variant="bordered" labelPlacement="outside" placeholder="Enter student ID" />
             <Input label="Address" name="address" value={formData.address} onChange={handleInputChange} variant="bordered" labelPlacement="outside" placeholder="Enter address" />
@@ -245,7 +282,7 @@ const App = () => {
                     color="default" 
                     variant="flat" 
                     className="w-full" 
-                    onClick={() => exportSingle(admissionRef, "Admission_Letter.png")}
+                    onClick={() => exportSingle(hiddenAdmissionRef, "Admission_Letter.png")}
                     isLoading={isGenerating}
                 >
                     Download Admission Letter
@@ -254,7 +291,7 @@ const App = () => {
                     color="default" 
                     variant="flat" 
                     className="w-full" 
-                    onClick={() => exportSingle(enrollmentRef, "Enrollment_Certificate.png")}
+                    onClick={() => exportSingle(hiddenEnrollmentRef, "Enrollment_Certificate.png")}
                     isLoading={isGenerating}
                 >
                     Download Enrollment Cert
@@ -262,6 +299,12 @@ const App = () => {
             </div>
           </div>
         </ScrollShadow>
+      </div>
+
+      {/* Hidden Export Containers */}
+      <div style={{ position: 'absolute', top: '-9999px', left: '-9999px' }}>
+          <AdmissionLetterTemplate ref={hiddenAdmissionRef} data={formData} />
+          <EnrollmentCertificateTemplate ref={hiddenEnrollmentRef} data={formData} />
       </div>
 
       {/* Main Preview Area - Infinite Canvas Style */}

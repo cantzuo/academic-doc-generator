@@ -14,14 +14,21 @@ const AdmissionLetterTemplate = forwardRef(({ data }, ref) => {
     }}>
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <div style={{ 
-                width: '80px', height: '80px', margin: '0 auto 15px', 
-                backgroundColor: '#1a365d', borderRadius: '50%', 
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                color: 'white', fontWeight: 'bold', fontSize: '14px', lineHeight: 1.2
-            }}>
-                HU<br/>SEAL
-            </div>
+            {data.universityLogo ? (
+                <img src={data.universityLogo} alt="Logo" style={{ 
+                    width: '80px', height: '80px', margin: '0 auto 15px', 
+                    objectFit: 'contain', display: 'block' 
+                }} />
+            ) : (
+                <div style={{ 
+                    width: '80px', height: '80px', margin: '0 auto 15px', 
+                    backgroundColor: '#1a365d', borderRadius: '50%', 
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: 'white', fontWeight: 'bold', fontSize: '14px', lineHeight: 1.2
+                }}>
+                    HU<br/>SEAL
+                </div>
+            )}
             <h1 style={{ fontSize: '28px', fontWeight: 'bold', color: '#1a365d', margin: '0', textTransform: 'uppercase', letterSpacing: '2px' }}>
                 {data.universityName}
             </h1>
