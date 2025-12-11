@@ -1,7 +1,0 @@
-{
-  "name": "academic-doc-generator", 
-  "compatibility_date": "2025-12-11",
-  "site": {
-    "bucket": "./dist"
-  }
-}
